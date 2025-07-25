@@ -288,6 +288,63 @@
       document.getElementById('username').value = savedUser.username;
       document.getElementById('phone').value = savedUser.phone;
       login();
+
+  const scenarios = [
+    {
+      id: 1,
+      name: "کاپو (CAPO)",
+      description: "سناریوی جذابی با نقش‌هایی مثل دن‌مافیا، جادوگر، جلاد، خبرچین و نق‌ش‌های پیچیده.",
+      roles: ["دن مافیا","جادوگر","جلاد","خبرچین","کارآگاه","شهروند","شهروند","شهروند","شهروند","شهروند"]
+    },
+    {
+      id: 2,
+      name: "نماینده (Representative Scenario)",
+      description: "در نسخه ۱۲ یا ۱۳ نفره: نقش‌های دون‌مافیا، هکر، یاغی، ناتو + شهروندان ویژه.",
+      roles: ["دون مافیا","هکر","یاغی","ناتو","راهنما","پزشک","محافظ","سرباز","شهروند","شهروند","شهروند","شهروند"]
+    },
+    {
+      id: 3,
+      name: "ناتو (Takaavvor/Nato)",
+      description: "نسخه ناتو از سناریو تکاور با نقش رهبر توانایی ناتویی یک‌بار تیم مافیا.",
+      roles: ["ناتو","مافیا","مافیا","دکتر","کارآگاه","شهروند","شهروند","شهروند","شهروند","شهروند"]
+    }
+  ];
+
+  function loadScenarios() {
+    const sel = document.getElementById('scenarioSelect');
+    scenarios.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${s.name} — ${s.description}`;
+      sel.appendChild(opt);
+    });
+  }
+
+  function createGame() {
+    const sid = parseInt(document.getElementById('scenarioSelect').value);
+    const count = parseInt(document.getElementById('playerCountSelect').value);
+    const sc = scenarios.find(s=>s.id===sid);
+    if (!sc) { alert("یک سناریو انتخاب کن"); return; }
+    let roles = sc.roles.slice(0, count);
+    while (roles.length < count) roles.push("شهروند");
+    roles = shuffleArray(roles);
+    const code = (Math.floor(1000+Math.random()*9000)).toString();
+    const game = { code, scenarioName: sc.name, description: sc.description, roles, playerCount: count, players: [] };
+    localStorage.setItem('currentGame', JSON.stringify(game));
+    document.getElementById('gameCreated').innerText = `کد بازی: ${code} — ${sc.name}`;
+  }
+
+  function shuffleArray(a) {
+    for (let i = a.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  window.onload = () => {
+    loadScenarios();
+    document.getElementById('createGameBtn').addEventListener('click', createGame);
     }
   };
 </script>
