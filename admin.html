@@ -236,7 +236,7 @@
       const isBanned = banned.includes(u.deviceId);
       const tr = document.createElement('tr');
 
-      tr.innerHTML = 
+      tr.innerHTML = `
         <td>${u.username}</td>
         <td>${u.phone}</td>
         <td>${u.deviceId}</td>
@@ -245,7 +245,7 @@
             ${isBanned ? 'بن شده' : 'بن کردن'}
           </button>
         </td>
-      ;
+      `;
       tbody.appendChild(tr);
     });
   }
@@ -274,7 +274,7 @@
     let credits = getUserCredits();
     credits[phone] = (credits[phone] || 0) + amount;
     saveUserCredits(credits);
-    alert(حساب کاربر ${phone} به اندازه ${amount} تومان شارژ شد.);
+    alert(`حساب کاربر ${phone} به اندازه ${amount} تومان شارژ شد.`);
   }
 
   function renderTickets() {
@@ -289,7 +289,7 @@
       const div = document.createElement('div');
       div.style.borderBottom = '1px solid #ff003c';
       div.style.padding = '6px 0';
-      div.innerHTML = <strong>از: ${t.phone}</strong><br>${t.message};
+      div.innerHTML = `<strong>از: ${t.phone}</strong><br>${t.message}`;
       container.appendChild(div);
     });
   }
@@ -319,7 +319,7 @@
     scenarios.forEach((s,i) => {
       const div = document.createElement('div');
       div.className = 'role-scenario-item';
-      div.textContent = سناریو ${i+1}: ${s};
+      div.textContent = `سناریو ${i+1}: ${s}`;
       list.appendChild(div);
     });
   }
@@ -351,7 +351,7 @@
     roles.forEach((r,i) => {
       const div = document.createElement('div');
       div.className = 'role-scenario-item';
-      div.innerHTML = <strong>${r.name}</strong>: ${r.desc};
+      div.innerHTML = `<strong>${r.name}</strong>: ${r.desc}`;
       list.appendChild(div);
     });
   }
