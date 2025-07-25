@@ -236,7 +236,7 @@
       const isBanned = banned.includes(u.deviceId);
       const tr = document.createElement('tr');
 
-      tr.innerHTML = `
+      tr.innerHTML = 
         <td>${u.username}</td>
         <td>${u.phone}</td>
         <td>${u.deviceId}</td>
@@ -245,7 +245,7 @@
             ${isBanned ? 'بن شده' : 'بن کردن'}
           </button>
         </td>
-      `;
+      ;
       tbody.appendChild(tr);
     });
   }
@@ -274,7 +274,7 @@
     let credits = getUserCredits();
     credits[phone] = (credits[phone] || 0) + amount;
     saveUserCredits(credits);
-    alert(`حساب کاربر ${phone} به اندازه ${amount} تومان شارژ شد.`);
+    alert(حساب کاربر ${phone} به اندازه ${amount} تومان شارژ شد.);
   }
 
   function renderTickets() {
@@ -289,7 +289,7 @@
       const div = document.createElement('div');
       div.style.borderBottom = '1px solid #ff003c';
       div.style.padding = '6px 0';
-      div.innerHTML = `<strong>از: ${t.phone}</strong><br>${t.message}`;
+      div.innerHTML = <strong>از: ${t.phone}</strong><br>${t.message};
       container.appendChild(div);
     });
   }
@@ -319,12 +319,12 @@
     scenarios.forEach((s,i) => {
       const div = document.createElement('div');
       div.className = 'role-scenario-item';
-      div.textContent = `سناریو ${i+1}: ${s}`;
+      div.textContent = سناریو ${i+1}: ${s};
       list.appendChild(div);
     });
   }
 
-
+  // بخش افزودن نقش
   function addRole() {
     const roleName = document.getElementById('newRole').value.trim();
     const roleDesc = document.getElementById('newRoleDesc').value.trim();
@@ -351,7 +351,7 @@
     roles.forEach((r,i) => {
       const div = document.createElement('div');
       div.className = 'role-scenario-item';
-      div.innerHTML = `<strong>${r.name}</strong>: ${r.desc}`;
+      div.innerHTML = <strong>${r.name}</strong>: ${r.desc};
       list.appendChild(div);
     });
   }
@@ -361,122 +361,6 @@
     renderTickets();
     renderScenarios();
     renderRoles();
-
-const scenarios = [
-    { id: 1, name: "سناریو شماره 1", roles: ["مافیا", "شهروند", "دکتر", "کارآگاه"] },
-    { id: 2, name: "سناریو شماره 2", roles: ["مافیا", "مافیا", "شهروند", "پزشک"] },
-    { id: 3, name: "سناریو شماره 3", roles: ["مافیا", "شهروند", "شهروند", "آتش‌نشان"] }
-  ];
-
-  // پر کردن لیست سناریوها در select
-  const scenarioSelect = document.getElementById('scenarioSelect');
-  scenarios.forEach(s => {
-    const option = document.createElement('option');
-    option.value = s.id;
-    option.textContent = s.name;
-    scenarioSelect.appendChild(option);
-  });
-
-  // دکمه ساخت بازی
-  const createGameBtn = document.getElementById('createGameBtn');
-  createGameBtn.addEventListener('click', () => {
-    const selectedScenarioId = parseInt(scenarioSelect.value);
-    const playerCount = parseInt(document.getElementById('playerCountSelect').value);
-
-    if (!selectedScenarioId) {
-      alert('لطفا یک سناریو انتخاب کنید');
-      return;
-    }
-
-    // پیدا کردن سناریوی انتخاب شده
-    const scenario = scenarios.find(s => s.id === selectedScenarioId);
-
-    // تولید کد بازی 4 رقمی
-    const gameCode = Math.floor(1000 + Math.random() * 9000);
-
-    // ساخت آبجکت بازی
-    const game = {
-      code: gameCode,
-      scenarioId: scenario.id,
-      scenarioName: scenario.name,
-      roles: shuffleRoles(scenario.roles, playerCount),
-      playerCount: playerCount,
-      players: [] // بازیکن‌ها وقتی جوین کنند اینجا ثبت میشن
-    };
-
-    // ذخیره بازی در localStorage یا میتونی با API بفرستی سرور
-    localStorage.setItem('currentGame', JSON.stringify(game));
-
-    alert(`بازی ساخته شد. کد بازی: ${gameCode}`);
-
-    // اینجا می‌تونی صفحه مدیریت بازی جدید رو باز کنی یا نمایش بدی
-    // مثلا window.location.href = `game-admin.html?code=${gameCode}`;
-  });
-
-  // تابع برای تقسیم نقش‌ها به صورت تصادفی و کامل برای تعداد پلیر
-  function shuffleRoles(roles, playerCount) {
-    // اگر تعداد نقش کمتر از پلیره، نقش شهروند به تعداد کمبود اضافه میشه
-    const rolesCopy = [...roles];
-    while (rolesCopy.length < playerCount) {
-      rolesCopy.push("شهروند");
-    }
-    // برش به تعداد پلیر (اگر نقش اضافه بود)
-    const sliced = rolesCopy.slice(0, playerCount);
-
-    // شفل کردن آرایه نقش‌ها
-    for (let i = sliced.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [sliced[i], sliced[j]] = [sliced[j], sliced[i]];
-    }
-    return sliced;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 </script>
 
