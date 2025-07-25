@@ -124,15 +124,13 @@
 
 <button id="logoutBtn" style="display:none;" onclick="logout()">خروج از حساب</button>
 
-<!-- فقط بخش <script> تغییر داده شده؛ بقیه کد همونه -->
-
 <script>
   function generateDeviceId() {
     return 'device-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
   }
 
   let deviceId = localStorage.getItem('deviceId');
-  if (!deviceId) {
+  if(!deviceId) {
     deviceId = generateDeviceId();
     localStorage.setItem('deviceId', deviceId);
   }
@@ -145,29 +143,29 @@
     const username = document.getElementById('username').value.trim();
     const phone = document.getElementById('phone').value.trim();
 
-    if (!username || !phone) {
+    if(!username || !phone) {
       alertMsg('لطفا نام کاربری و شماره تلفن را وارد کنید.');
       return;
     }
 
-    if (username === 'نگار') {
+    if(username === 'نگار') {
       let loggedUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
       const existsNegar = loggedUsers.some(u => u.username === 'نگار');
-      if (existsNegar) {
+      if(existsNegar) {
         alertMsg('نام کاربری "نگار" قبلاً وارد شده است.');
         return;
       }
     }
 
     let bannedDevices = JSON.parse(localStorage.getItem('bannedDevices') || '[]');
-    if (bannedDevices.includes(deviceId)) {
+    if(bannedDevices.includes(deviceId)) {
       alertMsg('دستگاه شما بن شده و امکان ورود ندارید.');
       return;
     }
 
     let loggedUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
-    if (!loggedUsers.some(u => u.deviceId === deviceId)) {
-      loggedUsers.push({ username, phone, deviceId });
+    if(!loggedUsers.some(u => u.deviceId === deviceId)) {
+      loggedUsers.push({username, phone, deviceId});
       localStorage.setItem('loggedInUsers', JSON.stringify(loggedUsers));
     }
 
@@ -178,10 +176,7 @@
     localStorage.setItem('userDevices', JSON.stringify(userDevices));
     localStorage.setItem('userPhones', JSON.stringify(userPhones));
 
-    // ذخیره اطلاعات ورود برای لاگین خودکار بعد از رفرش
-    localStorage.setItem('currentUser', JSON.stringify({ username, phone }));
-
-    if (phone === '09019118585' && username.toLowerCase() === 'admin roham') {
+    if(phone === '09019118585' && username.toLowerCase() === 'admin roham') {
       alertMsg('شما به عنوان ادمین وارد شدید. حالا به پنل ادمین منتقل می‌شوید...');
       window.location.href = 'admin.html';
       return;
@@ -204,7 +199,7 @@
     let credit = userCredits[phone] || 0;
     document.getElementById('creditAmount').textContent = credit;
 
-    if (credit >= 40000) {
+    if(credit >= 40000) {
       document.getElementById('roleText').textContent = 'نقش شما: مافیایی حرفه‌ای';
       document.getElementById('buyRoleBtn').style.display = 'none';
     } else {
@@ -217,7 +212,7 @@
     const phone = document.getElementById('phone').value.trim();
     let userCredits = JSON.parse(localStorage.getItem('userCredits') || '{}');
     let credit = userCredits[phone] || 0;
-    if (credit < 40000) {
+    if(credit < 40000) {
       alertMsg('اعتبار کافی ندارید. لطفاً از ادمین شارژ بخواهید.');
       return;
     }
@@ -229,13 +224,13 @@
 
   function sendTicket() {
     const msg = document.getElementById('ticketMsg').value.trim();
-    if (!msg) {
+    if(!msg) {
       alertMsg('پیام تیکت نمی‌تواند خالی باشد.');
       return;
     }
     let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
     const phone = document.getElementById('phone').value.trim();
-    tickets.push({ phone, msg, date: new Date().toISOString() });
+    tickets.push({phone, msg, date: new Date().toISOString()});
     localStorage.setItem('tickets', JSON.stringify(tickets));
     document.getElementById('ticketMsg').value = '';
     alertMsg('تیکت شما ارسال شد.');
@@ -245,7 +240,7 @@
   function displayTickets() {
     const ticketMessages = document.getElementById('ticketMessages');
     let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-
+    
     const phone = document.getElementById('phone').value.trim();
     const username = document.getElementById('username').value.trim().toLowerCase();
 
@@ -261,7 +256,7 @@
       }
     });
 
-    if (ticketMessages.innerHTML.trim() === '') {
+    if(ticketMessages.innerHTML.trim() === '') {
       ticketMessages.innerHTML = '<div style="color:#ff3366; font-style:italic;">پیامی برای نمایش وجود ندارد.</div>';
     }
   }
@@ -276,19 +271,7 @@
 
     document.getElementById('username').value = '';
     document.getElementById('phone').value = '';
-
-    // حذف کاربر لاگین‌شده از حافظه
-    localStorage.removeItem('currentUser');
   }
-
-  // لاگین خودکار در زمان رفرش صفحه
-  window.onload = function () {
-    const savedUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    if (savedUser) {
-      document.getElementById('username').value = savedUser.username;
-      document.getElementById('phone').value = savedUser.phone;
-      login();
-  };
 </script>
 
 </body>
