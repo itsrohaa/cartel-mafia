@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>کارتل کافه گیم - ورود کاربر</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Vazirmatn', sans-serif, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #ff003c;
+    text-shadow: 0 0 10px #ff003c;
+  }
+  input, button, textarea {
+    margin-top: 15px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    width: 300px;
+  }
+  input {
+    background: #222;
+    color: white;
+    text-align: center;
+  }
+  button {
+    background: #ff003c;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 12px #ff003c;
+    transition: 0.3s ease;
+  }
+  button:hover {
+    box-shadow: 0 0 20px #ff0055;
+    transform: scale(1.05);
+  }
+  #welcomeMsg {
+    margin-top: 25px;
+    font-size: 1.5rem;
+    color: #ff6699;
+    text-shadow: 0 0 8px #ff3366;
+  }
+  #roleSection, #creditSection, #ticketSection {
+    margin-top: 30px;
+    background: #110000cc;
+    padding: 20px;
+    border-radius: 15px;
+    width: 350px;
+    box-shadow: 0 0 15px #ff003c;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  textarea {
+    height: 100px;
+    resize: none;
+    background: #222;
+    color: #fff;
+    text-align: right;
+  }
+  #ticketMessages {
+    margin-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+    background: #220000;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: right;
+  }
+  #logoutBtn {
+    margin-top: 25px;
+    background: #770000;
+    box-shadow: 0 0 12px #ff003c;
+  }
+  #logoutBtn:hover {
+    background: #cc0000;
+    box-shadow: 0 0 20px #ff0055;
+  }
+</style>
+</head>
+<body>
+
+<h1>کارتل کافه گیم</h1>
+
+<div id="loginSection">
+  <input type="text" id="username" placeholder="نام کاربری خود را وارد کنید" autocomplete="off" />
+  <input type="tel" id="phone" placeholder="شماره تلفن خود را وارد کنید" autocomplete="off" />
+  <button onclick="login()">ورود</button>
+</div>
+
+<div id="welcomeMsg" style="display:none;"></div>
+
+<div id="creditSection" style="display:none;">
+  اعتبار حساب: <span id="creditAmount">0</span> تومان
+</div>
+
+<div id="roleSection" style="display:none;">
+  <h3>نقش شما:</h3>
+  <div id="roleText">برای دیدن نقش، ۴۰۰۰۰ تومان شارژ نیاز است.</div>
+  <button id="buyRoleBtn" onclick="buyRole()">خرید نقش (۴۰۰۰۰ تومان)</button>
+</div>
+
+<div id="ticketSection" style="display:none;">
+  <h3>ارسال تیکت به ادمین</h3>
+  <textarea id="ticketMsg" placeholder="پیام خود را وارد کنید..."></textarea>
+  <button onclick="sendTicket()">ارسال تیکت</button>
+
+  <div id="ticketMessages"></div>
+</div>
+
+<button id="logoutBtn" style="display:none;" onclick="logout()">خروج از حساب</button>
+
+<script>
+  function generateDeviceId() {
+    return 'device-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  }
+
+  let deviceId = localStorage.getItem('deviceId');
+  if(!deviceId) {
+    deviceId = generateDeviceId();
+    localStorage.setItem('deviceId', deviceId);
+  }
+
+  function alertMsg(msg) {
+    alert(msg);
+  }
+
+  function login() {
+    const username = document.getElementById('username').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    if(!username || !phone) {
+      alertMsg('لطفا نام کاربری و شماره تلفن را وارد کنید.');
+      return;
+    }
+
+    if(username === 'نگار') {
+      let loggedUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
+      const existsNegar = loggedUsers.some(u => u.username === 'نگار');
+      if(existsNegar) {
+        alertMsg('نام کاربری "نگار" قبلاً وارد شده است.');
+        return;
+      }
+    }
+
+    let bannedDevices = JSON.parse(localStorage.getItem('bannedDevices') || '[]');
+    if(bannedDevices.includes(deviceId)) {
+      alertMsg('دستگاه شما بن شده و امکان ورود ندارید.');
+      return;
+    }
+
+    let loggedUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
+    if(!loggedUsers.some(u => u.deviceId === deviceId)) {
+      loggedUsers.push({username, phone, deviceId});
+      localStorage.setItem('loggedInUsers', JSON.stringify(loggedUsers));
+    }
+
+    let userDevices = JSON.parse(localStorage.getItem('userDevices') || '{}');
+    let userPhones = JSON.parse(localStorage.getItem('userPhones') || '{}');
+    userDevices[phone] = deviceId;
+    userPhones[phone] = username;
+    localStorage.setItem('userDevices', JSON.stringify(userDevices));
+    localStorage.setItem('userPhones', JSON.stringify(userPhones));
+
+    if(phone === '09019118585' && username.toLowerCase() === 'admin roham') {
+      alertMsg('شما به عنوان ادمین وارد شدید. حالا به پنل ادمین منتقل می‌شوید...');
+      window.location.href = 'admin.html';
+      return;
+    }
+
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('welcomeMsg').style.display = 'block';
+    document.getElementById('welcomeMsg').textContent = `خوش آمدید، ${username}!`;
+    document.getElementById('creditSection').style.display = 'block';
+    document.getElementById('roleSection').style.display = 'block';
+    document.getElementById('ticketSection').style.display = 'block';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+
+    updateCredit(phone);
+    displayTickets();
+  }
+
+  function updateCredit(phone) {
+    let userCredits = JSON.parse(localStorage.getItem('userCredits') || '{}');
+    let credit = userCredits[phone] || 0;
+    document.getElementById('creditAmount').textContent = credit;
+
+    if(credit >= 40000) {
+      document.getElementById('roleText').textContent = 'نقش شما: مافیایی حرفه‌ای';
+      document.getElementById('buyRoleBtn').style.display = 'none';
+    } else {
+      document.getElementById('roleText').textContent = 'برای دیدن نقش، ۴۰۰۰۰ تومان شارژ نیاز است.';
+      document.getElementById('buyRoleBtn').style.display = 'inline-block';
+    }
+  }
+
+  function buyRole() {
+    const phone = document.getElementById('phone').value.trim();
+    let userCredits = JSON.parse(localStorage.getItem('userCredits') || '{}');
+    let credit = userCredits[phone] || 0;
+    if(credit < 40000) {
+      alertMsg('اعتبار کافی ندارید. لطفاً از ادمین شارژ بخواهید.');
+      return;
+    }
+    userCredits[phone] = credit - 40000;
+    localStorage.setItem('userCredits', JSON.stringify(userCredits));
+    updateCredit(phone);
+    alertMsg('نقش شما فعال شد! حالا می‌توانید آن را ببینید.');
+  }
+
+  function sendTicket() {
+    const msg = document.getElementById('ticketMsg').value.trim();
+    if(!msg) {
+      alertMsg('پیام تیکت نمی‌تواند خالی باشد.');
+      return;
+    }
+    let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+    const phone = document.getElementById('phone').value.trim();
+    tickets.push({phone, msg, date: new Date().toISOString()});
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+    document.getElementById('ticketMsg').value = '';
+    alertMsg('تیکت شما ارسال شد.');
+    displayTickets();
+  }
+
+  function displayTickets() {
+    const ticketMessages = document.getElementById('ticketMessages');
+    let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+    
+    const phone = document.getElementById('phone').value.trim();
+    const username = document.getElementById('username').value.trim().toLowerCase();
+
+    ticketMessages.innerHTML = '';
+
+    tickets.forEach(t => {
+      if (phone === t.phone || (phone === '09019118585' && username === 'admin roham')) {
+        ticketMessages.innerHTML += `
+          <div style="background:#330000; margin-bottom:8px; padding:8px; border-radius:6px; text-align:right;">
+            <strong>${t.phone}:</strong> ${t.msg} 
+            <small style="color:#ff6699;">(${new Date(t.date).toLocaleString()})</small>
+          </div>`;
+      }
+    });
+
+    if(ticketMessages.innerHTML.trim() === '') {
+      ticketMessages.innerHTML = '<div style="color:#ff3366; font-style:italic;">پیامی برای نمایش وجود ندارد.</div>';
+    }
+  }
+
+  function logout() {
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('welcomeMsg').style.display = 'none';
+    document.getElementById('creditSection').style.display = 'none';
+    document.getElementById('roleSection').style.display = 'none';
+    document.getElementById('ticketSection').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'none';
+
+    document.getElementById('username').value = '';
+    document.getElementById('phone').value = '';
+  }
+</script>
+
+</body>
+</html>
