@@ -1,0 +1,37 @@
+
+body {
+  font-family: 'Vazirmatn', 'Orbitron', sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+
+.neon-text {
+  text-shadow: 0 0 5px #ff003c, 0 0 10px #ff003c, 0 0 20px #ff003c;
+}
+
+.glow {
+  animation: glowPulse 3s infinite ease-in-out;
+}
+
+.neon-btn {
+  background: #ff003c;
+  border: none;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #ff003c, 0 0 20px #ff003c;
+  cursor: pointer;
+}
+
+@keyframes glowPulse {
+  0% {
+    text-shadow: 0 0 5px #ff003c, 0 0 10px #ff003c;
+  }
+  50% {
+    text-shadow: 0 0 20px #ff003c, 0 0 40px #ff003c;
+  }
+  100% {
+    text-shadow: 0 0 5px #ff003c, 0 0 10px #ff003c;
+  }
+}

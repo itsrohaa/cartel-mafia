@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>پنل ادمین - کارتل کافه گیم</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+    background: #000;
+    color: #ff003c;
+    font-family: 'Vazirmatn', sans-serif, Arial, sans-serif;
+    direction: rtl;
+  }
+  h1 {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 3rem;
+    text-shadow: 0 0 15px #ff003c;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: #111;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #ff003c;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+  }
+  th, td {
+    border: 1px solid #ff003c;
+    padding: 12px;
+    text-align: center;
+  }
+  th {
+    background: #330000;
+  }
+  button {
+    background: #ff003c;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff003c;
+    transition: 0.3s ease;
+  }
+  button:hover {
+    background: #ff3366;
+    box-shadow: 0 0 18px #ff6699;
+  }
+  input[type="text"], input[type="number"], input[type="password"], textarea {
+    width: 80%;
+    padding: 8px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: none;
+    background: #220000;
+    color: #ff6699;
+    text-align: center;
+    font-size: 1.1rem;
+    resize: none;
+  }
+  .section-title {
+    color: #ff6699;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+  #loginForm {
+    max-width: 400px;
+    margin: 80px auto;
+    background: #111;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px #ff003c;
+  }
+  .role-scenario-list {
+    max-height: 250px;
+    overflow-y: auto;
+    background: #220000;
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+  }
+  .role-scenario-item {
+    border-bottom: 1px solid #ff003c;
+    padding: 5px 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="loginForm">
+  <h1>ورود به پنل ادمین</h1>
+  <input type="text" id="username" placeholder="نام کاربری" autocomplete="off" />
+  <input type="text" id="phone" placeholder="شماره تلفن" autocomplete="off" />
+  <input type="password" id="password" placeholder="پسورد" autocomplete="off" />
+  <button onclick="loginAdmin()">ورود</button>
+</div>
+
+<div id="adminPanel" style="display:none;" class="container">
+
+  <h1>پنل مدیریت ادمین - کارتل کافه گیم</h1>
+
+  <div>
+    <h2 class="section-title">کاربران آنلاین</h2>
+    <table id="onlineUsersTable">
+      <thead>
+        <tr>
+          <th>نام کاربری</th>
+          <th>شماره تلفن</th>
+          <th>دیوایس‌آیدی</th>
+          <th>بن کردن (تایم‌اوت)</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <h2 class="section-title">شارژ حساب کاربران</h2>
+    <input type="text" id="chargePhone" placeholder="شماره تلفن کاربر" />
+    <input type="number" id="chargeAmount" placeholder="مقدار شارژ (تومان)" />
+    <button onclick="chargeUser()">افزایش شارژ</button>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h2 class="section-title">تیکت‌ها</h2>
+    <div id="ticketList" style="max-height: 150px; overflow-y: auto; background: #220000; padding: 10px; border-radius: 10px; color: #fff;">
+    </div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h2 class="section-title">افزودن سناریو جدید</h2>
+    <textarea id="newScenario" rows="3" placeholder="متن سناریو جدید را اینجا بنویسید..."></textarea><br/>
+    <button onclick="addScenario()">افزودن سناریو</button>
+    <div class="role-scenario-list" id="scenarioList"></div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h2 class="section-title">افزودن نقش جدید</h2>
+    <input type="text" id="newRole" placeholder="نام نقش جدید" />
+    <textarea id="newRoleDesc" rows="2" placeholder="توضیح نقش..."></textarea><br/>
+    <button onclick="addRole()">افزودن نقش</button>
+    <div class="role-scenario-list" id="roleList"></div>
+  </div>
+
+  <button style="margin-top:20px; background:#ff003c;" onclick="logoutAdmin()">خروج از پنل</button>
+
+</div>
+
+<script>
+  const ADMIN_USERNAME = "admin roham";
+  const ADMIN_PHONE = "09019118585";
+  const ADMIN_PASSWORD = "1385";
+
+  function loginAdmin() {
+    const username = document.getElementById('username').value.trim().toLowerCase();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (username === ADMIN_USERNAME && phone === ADMIN_PHONE && password === ADMIN_PASSWORD) {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadAdminData();
+    } else {
+      alert('نام کاربری، شماره تلفن یا پسورد اشتباه است.');
+    }
+  }
+
+  function logoutAdmin() {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+  }
+
+  // --- داده‌ها و فانکشن‌های مدیریت ---
+  function getLoggedUsers() {
+    return JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
+  }
+
+  function getBannedDevices() {
+    return JSON.parse(localStorage.getItem('bannedDevices') || '[]');
+  }
+
+  function saveBannedDevices(arr) {
+    localStorage.setItem('bannedDevices', JSON.stringify(arr));
+  }
+
+  function getUserCredits() {
+    return JSON.parse(localStorage.getItem('userCredits') || '{}');
+  }
+
+  function saveUserCredits(obj) {
+    localStorage.setItem('userCredits', JSON.stringify(obj));
+  }
+
+  function getTickets() {
+    return JSON.parse(localStorage.getItem('tickets') || '[]');
+  }
+
+  function getScenarios() {
+    return JSON.parse(localStorage.getItem('scenarios') || '[]');
+  }
+
+  function saveScenarios(arr) {
+    localStorage.setItem('scenarios', JSON.stringify(arr));
+  }
+
+  function getRoles() {
+    return JSON.parse(localStorage.getItem('roles') || '[]');
+  }
+
+  function saveRoles(arr) {
+    localStorage.setItem('roles', JSON.stringify(arr));
+  }
+
+  function renderOnlineUsers() {
+    const users = getLoggedUsers();
+    const banned = getBannedDevices();
+    const tbody = document.querySelector('#onlineUsersTable tbody');
+    tbody.innerHTML = '';
+
+    if(users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4">هیچ کاربری آنلاین نیست.</td></tr>';
+      return;
+    }
+
+    users.forEach(u => {
+      const isBanned = banned.includes(u.deviceId);
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${u.username}</td>
+        <td>${u.phone}</td>
+        <td>${u.deviceId}</td>
+        <td>
+          <button ${isBanned ? 'disabled style="background:#555;"' : ''} onclick="banDevice('${u.deviceId}')">
+            ${isBanned ? 'بن شده' : 'بن کردن'}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function banDevice(deviceId) {
+    let banned = getBannedDevices();
+    if(!banned.includes(deviceId)) {
+      banned.push(deviceId);
+      saveBannedDevices(banned);
+      alert('کاربر با این دیوایس‌آیدی بن شد.');
+      // حذف کاربر از کاربران آنلاین
+      let users = getLoggedUsers();
+      users = users.filter(u => u.deviceId !== deviceId);
+      localStorage.setItem('loggedInUsers', JSON.stringify(users));
+      renderOnlineUsers();
+    }
+  }
+
+  function chargeUser() {
+    const phone = document.getElementById('chargePhone').value.trim();
+    const amount = parseInt(document.getElementById('chargeAmount').value.trim());
+    if(!phone || isNaN(amount) || amount <= 0) {
+      alert('لطفا شماره تلفن و مقدار شارژ معتبر وارد کنید.');
+      return;
+    }
+    let credits = getUserCredits();
+    credits[phone] = (credits[phone] || 0) + amount;
+    saveUserCredits(credits);
+    alert(`حساب کاربر ${phone} به اندازه ${amount} تومان شارژ شد.`);
+  }
+
+  function renderTickets() {
+    const tickets = getTickets();
+    const container = document.getElementById('ticketList');
+    container.innerHTML = '';
+    if(tickets.length === 0) {
+      container.innerHTML = '<p>تیکتی وجود ندارد.</p>';
+      return;
+    }
+    tickets.forEach(t => {
+      const div = document.createElement('div');
+      div.style.borderBottom = '1px solid #ff003c';
+      div.style.padding = '6px 0';
+      div.innerHTML = `<strong>از: ${t.phone}</strong><br>${t.message}`;
+      container.appendChild(div);
+    });
+  }
+
+  // بخش افزودن سناریو
+  function addScenario() {
+    const text = document.getElementById('newScenario').value.trim();
+    if(text === '') {
+      alert('متن سناریو را وارد کنید.');
+      return;
+    }
+    let scenarios = getScenarios();
+    scenarios.push(text);
+    saveScenarios(scenarios);
+    document.getElementById('newScenario').value = '';
+    renderScenarios();
+    alert('سناریو اضافه شد.');
+  }
+  function renderScenarios() {
+    const list = document.getElementById('scenarioList');
+    const scenarios = getScenarios();
+    list.innerHTML = '';
+    if(scenarios.length === 0) {
+      list.innerHTML = '<p>سناریویی اضافه نشده.</p>';
+      return;
+    }
+    scenarios.forEach((s,i) => {
+      const div = document.createElement('div');
+      div.className = 'role-scenario-item';
+      div.textContent = `سناریو ${i+1}: ${s}`;
+      list.appendChild(div);
+    });
+  }
+
+  // بخش افزودن نقش
+  function addRole() {
+    const roleName = document.getElementById('newRole').value.trim();
+    const roleDesc = document.getElementById('newRoleDesc').value.trim();
+    if(roleName === '' || roleDesc === '') {
+      alert('نام نقش و توضیح نقش را وارد کنید.');
+      return;
+    }
+    let roles = getRoles();
+    roles.push({name: roleName, desc: roleDesc});
+    saveRoles(roles);
+    document.getElementById('newRole').value = '';
+    document.getElementById('newRoleDesc').value = '';
+    renderRoles();
+    alert('نقش اضافه شد.');
+  }
+  function renderRoles() {
+    const list = document.getElementById('roleList');
+    const roles = getRoles();
+    list.innerHTML = '';
+    if(roles.length === 0) {
+      list.innerHTML = '<p>نقشی اضافه نشده.</p>';
+      return;
+    }
+    roles.forEach((r,i) => {
+      const div = document.createElement('div');
+      div.className = 'role-scenario-item';
+      div.innerHTML = `<strong>${r.name}</strong>: ${r.desc}`;
+      list.appendChild(div);
+    });
+  }
+
+  function loadAdminData() {
+    renderOnlineUsers();
+    renderTickets();
+    renderScenarios();
+    renderRoles();
+  }
+</script>
+
+</body>
+</html>
